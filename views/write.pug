@@ -1,0 +1,24 @@
+extends layout
+
+block content
+    .container
+        form.quiz(action="/write" method="POST")
+            h1 Answer the Question
+            h3 What can you see in the image?
+            .row
+                if filename
+                    img.mx-auto.my-4(src=filename height="200")
+                else No file found
+            br
+            .form-row
+                .col-4.px-2
+                    input.form-control(type="text" name="ans1")
+                .col-4.px-2
+                    input.form-control(type="text" name="ans2")
+                .col-4.px-2
+                    input.form-control(type="text" name="ans3")
+            br
+            .form-row
+                button.btn-primary.mx-auto(type="submit") Submit answer
+            .form-row  
+                input.d-none(type="text" name="img" value=req)

@@ -7,7 +7,11 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/test', function(req, res, next) {
-  res.render('ImageDescQuiz', {title: 'Test'});
+  res.render('write');
+});
+
+router.post('/test', function(req, res, next) {
+  res.send(req.body);
 });
 
 module.exports = router;

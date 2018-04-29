@@ -7,7 +7,7 @@ var s3 = new AWS.S3();
 var rekognition = new AWS.Rekognition()
 
 /* GET write description. */
-router.get('/', async function(req, res, next) {
+router.get('/', function(req, res, next) {
   var params = {
     Bucket: 'ebainternshiprekognitionimage',
     Prefix: 'img',
@@ -20,7 +20,7 @@ router.get('/', async function(req, res, next) {
       console.log("Image count: ", imgCnt)
       let rngImg = data.Contents[Math.floor(Math.random() * imgCnt)].Key
       console.log("Random Image: ", rngImg)
-      let rekogInfo = await rekog(rngImg)
+      let rekogInfo = rekog(rngImg)
       console.log(rekogInfo)
       console.log(rekogInfo.Labels)
       let imgInfo = {
@@ -32,7 +32,7 @@ router.get('/', async function(req, res, next) {
   })
 })
 
-const rekog = async (imageName) => {
+const rekog = (imageName) => {
   var params = {
     Image: {
       S3Object: {
@@ -43,7 +43,7 @@ const rekog = async (imageName) => {
     MaxLabels: 123,
     MinConfidence: 50
   }
-  await rekognition.detectLabels(params, function(err, data) {
+  rekognition.detectLabels(params, function(err, data) {
     if (err) console.log(err, err.stack)
     else {
       console.log(data)
