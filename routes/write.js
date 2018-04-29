@@ -11,6 +11,7 @@ var filejson = JSON.parse(fs.readFileSync('./secret/newfilenames.json'))
 
 
 router.get('/loadimage', (req, res) => {
+  let urllink = 'https://s3-ap-northeast-1.amazonaws.com/ebainternshiprekognitionimage/img/';
   let filenames = filejson.Images;
 
   console.log(filenames);
@@ -19,7 +20,9 @@ router.get('/loadimage', (req, res) => {
 
   console.log(file);
 
-  res.render('write', {filename: file});  
+  urllink = urllink + file;
+
+  res.render('write', {imageurl: urllink});  
 });
 
 router.post('/loadimage', async (req, res) => {
