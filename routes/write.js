@@ -7,7 +7,7 @@ var s3 = new AWS.S3();
 var rekognition = new AWS.Rekognition()
 
 /* GET write description. */
-router.get('/', function(req, res, next) {
+router.get('/', async function(req, res, next) {
   var params = {
     Bucket: 'ebainternshiprekognitionimage',
     Prefix: 'img',
@@ -15,18 +15,24 @@ router.get('/', function(req, res, next) {
   s3.listObjects(params, function(err, data) {
     if (err) console.log(err, err.stack); // an error occurred
     else {
-      console.log(data)
+      //console.log(data)
       let imgCnt = Object.keys(data.Contents).length
       console.log("Image count: ", imgCnt)
       let rngImg = data.Contents[Math.floor(Math.random() * imgCnt)].Key
       console.log("Random Image: ", rngImg)
-      rekog(rngImg)
+      let rekogInfo = await rekog(rngImg)
+      console.log(rekogInfo)
+      console.log(rekogInfo.Labels)
+      let imgInfo = {
+        Key: rngImg,
+        Labels: rekogInfo.Labels
+      }
       res.send(rngImg)
     }
   })
 })
 
-const rekog = (imageName) => {
+const rekog = async (imageName) => {
   var params = {
     Image: {
       S3Object: {
@@ -37,9 +43,12 @@ const rekog = (imageName) => {
     MaxLabels: 123,
     MinConfidence: 50
   }
-  rekognition.detectLabels(params, function(err, data) {
+  await rekognition.detectLabels(params, function(err, data) {
     if (err) console.log(err, err.stack)
-    else console.log(data) // successful response
+    else {
+      console.log(data)
+      return data
+    }
   })
 }
 
