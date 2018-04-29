@@ -6,3 +6,17 @@ body {
 a {
   color: #00B7FF;
 }
+
+.container {
+  display: flex;
+  width: auto;
+  border: solid 1px black;
+  border-radius: 5px;
+}
+.container.quiz {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+}
