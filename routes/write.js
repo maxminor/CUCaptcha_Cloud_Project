@@ -22,19 +22,20 @@ router.get('/', (req, res) => {
 
   urllink = urllink + file;
 
-  res.render('write', {imageurl: urllink, imgName: 'img/' + file});  
+  res.render('write', {imageurl: urllink, imageName: 'img/' + file});  
 });
 
-router.post('/', async (req, res) => {
+router.post('/', async(req, res) => {
   console.log(req.body);
 
   //subject to change
-  const {imgName, answer1, answer2, answer3} = req.body;
+  const {filename, answer1, answer2, answer3} = req.body;
+
   var params = {
     Image: {
       S3Object: {
         Bucket: 'ebainternshiprekognitionimage',
-        Name: imgName
+        Name: filename
       }
     },
     MaxLabels: 123,
@@ -42,23 +43,20 @@ router.post('/', async (req, res) => {
   };
 
   try {
-    var labels
-    rekognition.detectLabels(params, function(err, data) {
-      if (err) console.log('ERROR', err)
-      else {
-        labels = data.Labels
-        //console.log(labels)
-        
-        for(let i = 0; i < labels.length; i++) {
-          console.log(labels[i])
-        }
-      }
-    });
-  } catch (e) {
-    console.log('ERROR', e);
-  }
+    let data = await rekognition.detectLabels(params);
 
-  console.log('333333333333333333333333333333333333333333')
+    let labelresults = data.Labels.map((obj) => {
+        return (obj.Name.toLowerCase());
+      });
+
+    //loop though the results
+
+    if (labelresults.includes(answer1.toLowerCase()) && labelresults.includes(answer2.toLowerCase()) && labelresults.includes(answer3.toLowerCase())) {}
+
+  } catch (e) {
+    console.log(e);
+  }
+});
 
 /*
   try {
