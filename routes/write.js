@@ -7,35 +7,42 @@ AWS.config.update({ region: 'ap-northeast-1' })
 var s3 = new AWS.S3();
 var rekognition = new AWS.Rekognition()
 
-var filejson = JSON.parse(fs.readFileSync('./secret/newfilenames.json'))
+const filejson = JSON.parse(fs.readFileSync('./secret/newfilenames.json'))
+const urllink = 'https://s3-ap-northeast-1.amazonaws.com/ebainternshiprekognitionimage/img/';
 
+
+function getRandomFilename() {
+  let filenames = filejson.Images;
+  return (filenames[Math.floor(Math.random() * filenames.length)])
+}
 
 router.get('/', (req, res) => {
-  let urllink = 'https://s3-ap-northeast-1.amazonaws.com/ebainternshiprekognitionimage/img/';
-  let filenames = filejson.Images;
+  
 
   //console.log(filenames);
 
-  let file = filenames[Math.floor(Math.random() * filenames.length)]
+  let file = getRandomFilename();
 
   console.log(file);
 
-  urllink = urllink + file;
+  fullurllink = urllink + file;
 
-  res.render('write', {imageurl: urllink, imageName: 'img/' + file});  
+  res.render('write', {imageurl: fullurllink, imageName: 'img/' + file});  
 });
+
+
 
 router.post('/', async(req, res) => {
   console.log(req.body);
 
   //subject to change
-  const {filename, answer1, answer2, answer3} = req.body;
+  const {imageName, answer1, answer2, answer3} = req.body;
 
   var params = {
     Image: {
       S3Object: {
         Bucket: 'ebainternshiprekognitionimage',
-        Name: filename
+        Name: imageName
       }
     },
     MaxLabels: 123,
@@ -43,30 +50,29 @@ router.post('/', async(req, res) => {
   };
 
   try {
-    let data = await rekognition.detectLabels(params);
+    const detectLabelsPromise = rekognition.detectLabels(params).promise();
+    let data = await detectLabelsPromise;
 
     let labelresults = data.Labels.map((obj) => {
         return (obj.Name.toLowerCase());
       });
 
-    //loop though the results
+    console.log(labelresults);
+    //loop though the result
+    if (labelresults.includes(answer1.toLowerCase()) && labelresults.includes(answer2.toLowerCase()) && labelresults.includes(answer3.toLowerCase())) {
+      res.render('writeResult');
+    } else {
+      let file = getRandomFilename();
+      fullurllink = urllink + file;
 
-    if (labelresults.includes(answer1.toLowerCase()) && labelresults.includes(answer2.toLowerCase()) && labelresults.includes(answer3.toLowerCase())) {}
+      res.render('write', {imageurl: fullurllink, imageName: 'img/' + file, err : "Your description doesn't match what we find in the image, please try again"})
+    }
 
   } catch (e) {
     console.log(e);
   }
 });
 
-/*
-  try {
-    const data = await rekognition.detectLabels(params);
-    console.log(data)
-  } catch (e) {
-    console.log('ERROR', e);
-  }*/
-
-});
 
 
   
