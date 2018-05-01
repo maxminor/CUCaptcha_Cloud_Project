@@ -6,9 +6,10 @@ block content
             h1 Answer the Question
             h3 What can you see in the image?
             .row
-                if filename
-                    img.mx-auto.my-4(src=filename height="200")
-                else No file found
+                if imageurl
+                    img.mx-auto.my-4(src=imageurl height="200")
+                else 
+                    h3 No file found
             br
             .form-row
                 .col-4.px-2
@@ -19,6 +20,6 @@ block content
                     input.form-control(type="text" name="ans3")
             br
             .form-row
-                button.btn-primary.mx-auto(type="submit") Submit answer
+                button.btn.btn-primary.mx-auto(type="submit") Submit answer
             .form-row  
-                input.d-none(type="text" name="img" value=req)
+                input.d-none(type="text" name="imgName" value=imgName)

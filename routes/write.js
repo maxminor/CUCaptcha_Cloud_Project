@@ -14,7 +14,7 @@ router.get('/', (req, res) => {
   let urllink = 'https://s3-ap-northeast-1.amazonaws.com/ebainternshiprekognitionimage/img/';
   let filenames = filejson.Images;
 
-  console.log(filenames);
+  //console.log(filenames);
 
   let file = filenames[Math.floor(Math.random() * filenames.length)]
 
@@ -22,20 +22,19 @@ router.get('/', (req, res) => {
 
   urllink = urllink + file;
 
-  res.render('write', {imageurl: urllink});  
+  res.render('write', {imageurl: urllink, imgName: 'img/' + file});  
 });
 
 router.post('/', async (req, res) => {
   console.log(req.body);
 
   //subject to change
-  const {filename, answer1, answer2, answer3} = req.body;
-
+  const {imgName, answer1, answer2, answer3} = req.body;
   var params = {
     Image: {
       S3Object: {
         Bucket: 'ebainternshiprekognitionimage',
-        Name: filename
+        Name: imgName
       }
     },
     MaxLabels: 123,
@@ -43,10 +42,32 @@ router.post('/', async (req, res) => {
   };
 
   try {
-    let data = await rekognition.detectLabels(params);
+    var labels
+    rekognition.detectLabels(params, function(err, data) {
+      if (err) console.log('ERROR', err)
+      else {
+        labels = data.Labels
+        //console.log(labels)
+        
+        for(let i = 0; i < labels.length; i++) {
+          console.log(labels[i])
+        }
+      }
+    });
   } catch (e) {
-    console.log(e);
+    console.log('ERROR', e);
   }
+
+  console.log('333333333333333333333333333333333333333333')
+
+/*
+  try {
+    const data = await rekognition.detectLabels(params);
+    console.log(data)
+  } catch (e) {
+    console.log('ERROR', e);
+  }*/
+
 });
 
 
