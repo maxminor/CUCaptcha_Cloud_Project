@@ -5,6 +5,10 @@ block content
         form.quiz(action="/write" method="POST")
             h1 Answer the Question
             h3 What can you see in the image?
+            if err
+                .alert.alert-danger
+                    strong #{err}
+
             .row
                 if imageurl
                     img.mx-auto.my-4(src=imageurl height="200")
@@ -22,4 +26,5 @@ block content
             .form-row
                 button.btn.btn-primary.mx-auto(type="submit") Submit answer
             .form-row  
+                input.d-none(type="text" name="imageUrl" value=imageurl)
                 input.d-none(type="text" name="imageName" value=imageName)
