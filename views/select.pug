@@ -1,0 +1,25 @@
+extends layout
+
+block content
+    .container.d-flex.justify-content-center.flex-row
+      form(action="/select" method="POST")
+        h3 Select images with #{object}
+        //- each img in images
+          button.btn.btn-warning.p-2.align-middle.m-2(data-toggle="button")
+            img(src=img.link height="150")
+        //- button.btn.btn-warning.p-2.align-middle.m-2(data-toggle="button" name="btn1")
+          input(type="select" name="sdasd")
+        //- button.btn.btn-warning.p-2.align-middle.m-2(data-toggle="button" name="btn2")
+          input(type="select" name="qweqweqwe")
+        //- button.btn.btn-warning.p-2.align-middle.m-2(data-toggle="button" name="btn3")
+          input(type="select" name="sdazxczxczxcsd")
+        //- button.btn.btn-danger.p-2.align-middle.m-2(type="submit" name="btn1") Submit
+        each img, index in images
+          input(type="checkbox" id=index name=index)
+          label(for=index)
+            img(src=img.link height="200")
+        br
+        button.btn.btn-danger.p-2.align-middle.m-2(type="submit") Submit
+        
+        .form-row  
+          input.d-none(type="text" name="question" value=JSON.stringify(images))
